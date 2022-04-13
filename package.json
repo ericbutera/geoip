@@ -1,7 +1,7 @@
 {
   "name": "geoapi",
   "version": "1.0.0",
-  "description": "",
+  "description": "GeoAPI Demo Project",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
