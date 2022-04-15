@@ -47,8 +47,9 @@ describe('geoapi', () => {
   })
 
   // TODO:
-  // test invalid format
-  // test 500 errors
-  // test 404 missing route
+  // test health endpoint
+  // test ip invalid format
+  // test ip 500 errors
+  // test ip 404 missing route
 
 });

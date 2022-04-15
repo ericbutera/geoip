@@ -14,21 +14,19 @@ The API only supports the JSON content-type at this time.
 ### IP
 Look up Geo location of a provided Internet Protocol (IP) address.
 
-Endpoint: `/api/v1/ip/:ip`
+Endpoint: `/ip/:ip`
 
-Example: `/api/v1/ip/8.8.8.8`
+Example: `/ip/8.8.8.8`
 
 #### Request
 ```bash
-curl -H "Accept: application/json" http://localhost:3000/api/v1/ip/8.8.8.8
+curl -H "Accept: application/json" http://localhost:3000/ip/8.8.8.8
 ```
 
 #### Response
 ```
 < HTTP/1.1 200 OK
-< X-Powered-By: Express
 < Content-Type: application/json; charset=utf-8
-< Content-Length: 39
 ```
 ```js
 {
@@ -36,6 +34,49 @@ curl -H "Accept: application/json" http://localhost:3000/api/v1/ip/8.8.8.8
     "longitude": -97.822
 }
 ```
+
+### Health
+Health check endpoint.
+Endpoint: `/health`
+
+#### Request
+```bash
+curl -H "Accept: application/json" http://localhost:3000/health
+```
+
+#### Response
+```
+< HTTP/1.1 200 OK
+< Content-Type: application/json; charset=utf-8
+```
+```js
+{
+    "message": "OK"
+}
+```
+
+#### Status Codes
+| Status Code | Description                                             |
+|-------------|---------------------------------------------------------|
+| 200         | Success                                                 |
+| 404         | Address Not found                                       |
+| 400         | Value Error: Happens if the IP syntax is not recognized |
+| 500         | Unexpected Error: Try the request again                 |
+
+# Testing
+To run the test suite use npm: `npm test`
+
+# Running the Server
+The server can be ran stand-alone.
+```bash
+npm install
+npm start
+```
+
+# Project Roadmap
+```
+#### Response
+
 
 #### Status Codes
 | Status Code | Description                                             |
@@ -70,16 +111,15 @@ Major project milestones and future enhancements are listed here.
         - issue head for checking if fetch necessary
         - app needs restart after fetch
 - app todo:
+    - logging (at least console log reqs)
     - hook up to github actions
-    - containerize 
-    - no auth
-    - logging
-    - monitoring/observability
     - [openapi](https://github.com/kogosoftwarellc/open-api/tree/master/packages/express-openapi#what-is-openapi)
-    - rate limit?
+    - no auth
 
 # Development Log
 Here is a running list of tasks performed to faciliate discussion.
+- added health check, updated readme
+- github actions wont work until i figure out how to include *.mmdb
 - added more test cases as comments
 - added api docs to readme
 - wrote integration test

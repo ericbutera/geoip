@@ -42,6 +42,12 @@ app.get(base + '/ip/:ip', (req, res) => {
   return apiError(res, 500, 'Unexpected Error', 'Unknown');
 });
 
+app.get('/health', (req, res) => {
+  res.json({
+    message: 'OK'
+  })
+});
+
 /**
  * Convert raw errors into REST friendly format
  * @param {Response} res 
