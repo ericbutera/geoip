@@ -10,13 +10,13 @@ At this time there isn't any authorization built into the application.
 The API only supports the JSON content-type at this time.
 
 ## API Endpoints
+- [ip](#IP)
+- [health](#Health)
 
 ### IP
 Look up Geo location of a provided Internet Protocol (IP) address.
 
 Endpoint: `/ip/:ip`
-
-Example: `/ip/8.8.8.8`
 
 #### Request
 ```bash
