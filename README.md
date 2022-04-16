@@ -74,29 +74,6 @@ npm start
 ```
 
 # Project Roadmap
-```
-#### Response
-
-
-#### Status Codes
-| Status Code | Description                                             |
-|-------------|---------------------------------------------------------|
-| 200         | Success                                                 |
-| 404         | Address Not found                                       |
-| 400         | Value Error: Happens if the IP syntax is not recognized |
-| 500         | Unexpected Error: Try the request again                 |
-
-# Testing
-To run the test suite use npm: `npm test`
-
-# Running the Server
-The server can be ran stand-alone.
-```bash
-npm install
-npm start
-```
-
-# Project Roadmap
 Major project milestones and future enhancements are listed here.
 - kubernetes
     - node app is public
@@ -128,12 +105,12 @@ Here is a running list of tasks performed to faciliate discussion.
     - docker.io/ericbutera/geoapi
 - added gitignore, dockerfile, docker ignore
 - bootstrapped simple express app reading static database
-- need to keep in mind the Geo API key will be an ENV var 
+- need to keep in mind the Geo API key will be an ENV var
 - looked into geoip docker
     - https://github.com/maxmind/geoipupdate/blob/main/doc/docker.md
 - download static database
     - https://www.maxmind.com/en/accounts/705712/geoip/downloads
-    - GeoLite2 City 
+    - GeoLite2 City
 - add @maxmind/geoip2-node
     - https://dev.maxmind.com/geoip/docs/databases?lang=en#official-api-clients
 - scaffold project npm init
