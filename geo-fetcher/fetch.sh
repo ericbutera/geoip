@@ -26,6 +26,8 @@ http_response=$(curl -s \
   --retry-max-time 40 \
   $GEOIP_UPDATE_URL)
 
+# TODO: compare download with sha256
+
 echo "Response $http_response"
 if [ $http_response != "200" ]; then
   echo "Fatal: Unable to download Geo database"

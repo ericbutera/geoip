@@ -1,5 +1,5 @@
 # Geo API
-Geo-location web services utilizing [Maxmind GeoIP](https://www.maxmind.com/) database.
+Geo-location web services utilizing [MaxMind GeoLite City](https://www.maxmind.com/) database.
 
 # Requirements
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -144,18 +144,19 @@ Major project milestones and future enhancements are listed here.
 - images
   - it would be nice to have the docker images published; perhaps a github action can do this?
 - kubernetes
-    - node app is public
-    - geoupdater private
-    - secrets manager for API key
+    - node app is public (using port forwarding)
+    - ~~geoupdater private~~
+    - ~~secrets manager for API key~~ using kubectl secrets
 - geoupdater
-    - use geoupdater?
-        - risk as its third party, could cause downtime
-        - not immediately obvious what it updates or where the output goes
-    - use csv OR mmdb
+    - UPDATE: used geo-fetch  (see geo-fetcher directory)
+    - ~~use geoupdater?~~ NO
+        - ~~risk as its third party, could cause downtime~~
+        - ~~not immediately obvious what it updates or where the output goes~~
+    - ~~use csv OR mmdb~~ MMDB
         - requires comparing sha256 against download
         - issue head for checking if fetch necessary
         - app needs restart after fetch
-- app todo:
+- app:
     - logging (at least console log reqs)
     - hook up to github actions
     - [openapi](https://github.com/kogosoftwarellc/open-api/tree/master/packages/express-openapi#what-is-openapi)
@@ -163,6 +164,8 @@ Major project milestones and future enhancements are listed here.
 
 # Development Log
 Here is a running list of tasks performed to faciliate discussion.
+- added better error handling and retry on fetcher
+- tested on mac, documented error with secret not being set
 - fixed api tests; I was relying on old versioned api & the mmdb database existing within the project
 - added port forwarding instructions
 - figured out k8s secrets from the command line: `kubectl create secret generic geo-api-key --from-literal=geo-api-key='API-KEY-VALUE'`
