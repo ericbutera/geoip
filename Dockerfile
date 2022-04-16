@@ -1,3 +1,5 @@
+# docker build -t ericbutera/geoapi .
+# docker push ericbutera/geoapi
 FROM node:16
 WORKDIR /usr/src/app
 
