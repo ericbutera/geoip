@@ -6,8 +6,6 @@ then
   exit 1
 fi
 
-echo "Starting download"
-
 if [ $ENVIRONMENT = "production" ]; then
   export GEOIP_UPDATE_URL="https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=$GEOIP_UPDATE_LICENSE_KEY&suffix=tar.gz"
 else
@@ -18,16 +16,21 @@ fi
 echo "Starting fetch"
 
 echo "Pulling database..."
-# TODO
-# - add retry
-# - add error handling for non 200 status codes
-# http_response=$(curl -s -o city.tar.gz -w "%{http_code}" $GEOIP_UPDATE_URL)
-curl -s -o city.tar.gz $GEOIP_UPDATE_URL
-# echo "Response $http_response"
-# if [ $http_response != "200" ]; then
-#   echo "Fatal: Unable to download Geo database"
-#   exit 1
-# fi
+http_response=$(curl -s \
+  -o city.tar.gz -w "%{http_code}" \
+  --connect-timeout 5 \
+  --retry 5 \
+  --max-time 10 \
+  --retry 5 \
+  --retry-delay 0 \
+  --retry-max-time 40 \
+  $GEOIP_UPDATE_URL)
+
+echo "Response $http_response"
+if [ $http_response != "200" ]; then
+  echo "Fatal: Unable to download Geo database"
+  exit 1
+fi
 
 echo "Finished pulling database"
 
