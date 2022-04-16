@@ -17,6 +17,8 @@ Geo-location web services utilizing [Maxmind GeoIP](https://www.maxmind.com/) da
 # Configuration
 This project is intended to be orchestrated via Kubernetes in Docker Desktop. All configuration is handled by environment variables. By default only the MaxMind API requires configuration.
 
+Note: If the API key secret is missing the `geoip-web-*` container will end up with the status `Init:CreateContainerConfigError`.
+
 ## MaxMind API Key
 A MaxMind account is required to obtain GeoLite databases. MaxMind API keys are located [here](https://www.maxmind.com/en/accounts/current/license-key).
 

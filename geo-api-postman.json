@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "66ac4e9e-4dc7-4e4d-a808-4a67e4a150d2",
+		"_postman_id": "c33445e4-69c4-4bbe-9fa0-ce5884d5e068",
 		"name": "Geo API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,7 +9,16 @@
 			"name": "health",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "{{host}}/health",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"health"
+					]
+				}
 			},
 			"response": []
 		},
