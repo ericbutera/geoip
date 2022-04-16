@@ -1,6 +1,13 @@
 # Geo API
 Geo-location web services utilizing [Maxmind GeoIP](https://www.maxmind.com/) database.
 
+# Configuration
+Configuration is achived through system environment variables.
+
+## Environment Variables
+- GEOAPI_PORT - which port to bind to
+- GEOAPI_DATABASE_PATH - path to GeoLite city database (mmdb)
+
 # API Documentation
 
 ## Authorization
@@ -72,6 +79,17 @@ The server can be ran stand-alone.
 npm install
 npm start
 ```
+
+# Project Requirements
+- API resolving lat/long for an IP
+- Use MaxMind GeoLite2 database (contains geo data for ip)
+- Kubernetes orchestrates workflow:
+  - fetch/update Geo database (every "several weeks")
+  - start/restart API server to use new database
+- Launch with single command:
+  - `kubectl apply`
+  - `helm install`
+  - `make deploy`
 
 # Project Roadmap
 Major project milestones and future enhancements are listed here.

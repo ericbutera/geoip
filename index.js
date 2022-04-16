@@ -2,19 +2,19 @@
 
 const express = require('express');
 const app = express();
-const base = '/api/v1';
+const databasePath = process.env.GEOAPI_DATABASE_PATH || 'city.mmdb'
 
 app.use(function (req, res, next) {
   res.header('Content-Type', 'application/json');
   next();
 });
 
-// MaxMind API docs 
+// MaxMind API docs
 // https://maxmind.github.io/GeoIP2-node/
 // https://maxmind.github.io/GeoIP2-node/classes/City.html
 const fs = require('fs');
 const Reader = require('@maxmind/geoip2-node').Reader
-const dbBuffer = fs.readFileSync('city.mmdb'); // TODO: how to "auto-update and make this file available"
+const dbBuffer = fs.readFileSync(databasePath);
 const reader = Reader.openBuffer(dbBuffer);
 
 /**
@@ -22,7 +22,7 @@ const reader = Reader.openBuffer(dbBuffer);
  * @param {Request}
  * @param {Response}
  */
-app.get(base + '/ip/:ip', (req, res) => {
+app.get('/ip/:ip', (req, res) => {
   // TODO: tidy up code; a bit harsh to look at
   try {
     let geo = reader.city(req.params['ip']);
@@ -50,8 +50,8 @@ app.get('/health', (req, res) => {
 
 /**
  * Convert raw errors into REST friendly format
- * @param {Response} res 
- * @param {Error} e 
+ * @param {Response} res
+ * @param {Error} e
  * @returns {Response}
  */
 const handleIpException = (res, e) => {
@@ -66,10 +66,10 @@ const handleIpException = (res, e) => {
 
 /**
  * Enforce API error contract
- * @param {Response} res 
- * @param {number} code 
- * @param {string} message 
- * @param {string} error 
+ * @param {Response} res
+ * @param {number} code
+ * @param {string} message
+ * @param {string} error
  * @returns {Response}
  */
 const apiError = (res, code, message, error) => {
@@ -90,7 +90,7 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: 'Error', error: err })
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.GEOAPI_PORT || 3000;
 const server = app.listen(port, () => {
   console.log(`Running on ${port}`);
 });
