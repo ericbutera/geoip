@@ -1,12 +1,37 @@
 # Geo API
 Geo-location web services utilizing [Maxmind GeoIP](https://www.maxmind.com/) database.
 
+# Requirements
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [git](https://git-scm.com/downloads)
+- [node/npm](https://nodejs.org/en/download/) (if running tests)
+
+# Quickstart
+1. Clone the code: `git clone git@github.com:ericbutera/geoip.git`
+2. [Configure API Key](#MaxMind-API-Key)
+3. Run Deployment: `kubectl apply -f kubernetes/geo-deployment.yml`
+
 # Configuration
-Configuration is achived through system environment variables.
+This project is intended to be orchestrated via Kubernetes in Docker Desktop. All configuration is handled by environment variables. By default only the MaxMind API requires configuration.
+
+## MaxMind API Key
+To set the API key, run this command:
+```
+kubectl create secret generic geo-api-key --from-literal=geo-api-key='API-KEY-VALUE'
+```
 
 ## Environment Variables
-- GEOAPI_PORT - which port to bind to
-- GEOAPI_DATABASE_PATH - path to GeoLite city database (mmdb)
+- API
+    - GEOAPI_PORT - which port to bind to
+    - GEOAPI_DATABASE_PATH - path to GeoLite city database (mmdb)
+- Fetcher
+  - GEOIP_UPDATE_LICENSE_KEY - configured with kubectl secret key
+
+## Container Registry
+DockerHub is the expected Container Service registry.
+- [geoapi](https://hub.docker.com/repository/docker/ericbutera/geoapi)
+- [geofetcher](https://hub.docker.com/repository/docker/ericbutera/geo-fetcher)
 
 # API Documentation
 
@@ -93,6 +118,8 @@ npm start
 
 # Project Roadmap
 Major project milestones and future enhancements are listed here.
+- images
+  - it would be nice to have the docker images published; perhaps a github action can do this?
 - kubernetes
     - node app is public
     - geoupdater private
@@ -113,6 +140,14 @@ Major project milestones and future enhancements are listed here.
 
 # Development Log
 Here is a running list of tasks performed to faciliate discussion.
+- figured out k8s secrets from the command line: `kubectl create secret generic geo-api-key --from-literal=geo-api-key='API-KEY-VALUE'`
+- i realized my repo, containers, and app names became out of sync as the project moved along. i would like to rename things to geo-* for consistency.
+- created geo-fetcher image
+    - the process is complicated enough to warrant usage of a bash script
+    - added output showing progress
+    - added geo-fetcher README to show commands on building image
+- added initial k8s orchestration in kubernetes/geo-deployment.yml
+- updated app to use ENV config
 - added health check, updated readme
 - github actions wont work until i figure out how to include *.mmdb
 - added more test cases as comments
