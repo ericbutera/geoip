@@ -12,7 +12,7 @@ describe('geoapi', () => {
 
   it('responds to 8888', function testGoogleDns(done) {
     request(app)
-      .get('/api/v1/ip/8.8.8.8')
+      .get('/ip/8.8.8.8')
       .expect('Content-Type', /json/)
       .then(response => {
         assert(response.body.geo.latitude, 37.751)
@@ -24,7 +24,7 @@ describe('geoapi', () => {
 
   it('rejects on malformed ip', (done) => {
     request(app)
-      .get('/api/v1/ip/asdf')
+      .get('/ip/asdf')
       .expect('Content-Type', /json/)
       .expect(400)
       .then(response => {
@@ -36,7 +36,7 @@ describe('geoapi', () => {
 
   it('errors on invalid ip', (done) => {
     request(app)
-      .get('/api/v1/ip/127.0.0.1')
+      .get('/ip/127.0.0.1')
       .expect('Content-Type', /json/)
       .expect(404)
       .then(response => {

@@ -101,7 +101,21 @@ curl -H "Accept: application/json" http://localhost:3000/health
 | 500         | Unexpected Error: Try the request again                 |
 
 # Testing
-To run the test suite use npm: `npm test`
+In order to run the tests you will need a copy of the GeoLite2 City database. This can be obtained from [MaxMind](https://dev.maxmind.com/geoip/updating-databases?lang=en#directly-downloading-databases) for free after creating an account. The API key management is located [here](https://www.maxmind.com/en/accounts/current/license-key).
+
+Once you have `GeoLite2-City_*.tar.gz`, extract and define the environment variable `GEOAPI_DATABASE_PATH` to the full path of the mmdb file.
+
+Example:
+```sh
+# TODO - i usually verify from scratch these things work, but I ran out of time.
+# Note: replace YOUR_LICENSE_KEY with the license key from your account
+curl -o ~/Download/city.tar.gz https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=YOUR_LICENSE_KEY&suffix=tar.gz
+
+cd ~/Downloads
+tar zxvf city.tar.gz
+export GEOAPI_DATABASE_PATH=~/Downloads/GeoLite2-City.mmdb
+npm test
+```
 
 # Running the Server
 The server can be ran stand-alone.
@@ -145,6 +159,8 @@ Major project milestones and future enhancements are listed here.
 
 # Development Log
 Here is a running list of tasks performed to faciliate discussion.
+- fixed api tests; I was relying on old versioned api & the mmdb database existing within the project
+- added port forwarding instructions
 - figured out k8s secrets from the command line: `kubectl create secret generic geo-api-key --from-literal=geo-api-key='API-KEY-VALUE'`
 - i realized my repo, containers, and app names became out of sync as the project moved along. i would like to rename things to geo-* for consistency.
 - created geo-fetcher image
