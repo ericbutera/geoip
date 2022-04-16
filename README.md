@@ -11,6 +11,8 @@ Geo-location web services utilizing [Maxmind GeoIP](https://www.maxmind.com/) da
 1. Clone the code: `git clone git@github.com:ericbutera/geoip.git`
 2. [Configure API Key](#MaxMind-API-Key)
 3. Run Deployment: `kubectl apply -f kubernetes/geo-deployment.yml`
+4. Port forward: `kubectl port-forward deployment/geoip-web 8080:8080`
+5. (Optional) Use the [Postman collection](https://github.com/ericbutera/geoip/blob/main/geo-api-postman.json)
 
 # Configuration
 This project is intended to be orchestrated via Kubernetes in Docker Desktop. All configuration is handled by environment variables. By default only the MaxMind API requires configuration.
@@ -22,11 +24,14 @@ kubectl create secret generic geo-api-key --from-literal=geo-api-key='API-KEY-VA
 ```
 
 ## Environment Variables
-- API
+- Geo API
     - GEOAPI_PORT - which port to bind to
     - GEOAPI_DATABASE_PATH - path to GeoLite city database (mmdb)
-- Fetcher
+- Geo Fetcher
   - GEOIP_UPDATE_LICENSE_KEY - configured with kubectl secret key
+  - ENVIRONMENT
+    - test - (default) uses the test server
+    - production - live connection to MaxMind which requires a valid API key
 
 ## Container Registry
 DockerHub is the expected Container Service registry.

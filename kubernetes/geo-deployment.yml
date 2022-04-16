@@ -1,0 +1,61 @@
+# start:
+# kubectl apply -f kubernetes/geo-deployment.yml
+#
+# port-forward:
+# kubectl port-forward deployment/geoip-web 8080:8080
+#
+# stop:
+# kubectl delete deploy --all
+
+# TODO loadbalancer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: geoip-web
+  labels:
+    app: geoip-web
+spec:
+  # replicas: 2 # TODO
+  selector:
+    matchLabels:
+      app: geoip-web
+  template:
+    metadata:
+      labels:
+        app: geoip-web
+    spec:
+      # in present state, this will hit the external site per replicas
+      initContainers:
+        - name: geo-fetcher
+          image: ericbutera/geo-fetcher
+          env:
+            - name: ENVIRONMENT
+              # value: production
+              value: test
+            # see https://github.com/ericbutera/geoip/blob/main/README.md#maxmind-api-key
+            - name: GEOIP_UPDATE_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: geo-api-key
+                  key: geo-api-key
+          volumeMounts:
+            - name: web
+              mountPath: '/data'
+      containers:
+        - name: geoapi
+          image: ericbutera/geoapi
+          env:
+            - name: GEOAPI_DATABASE_PATH
+              value: "/data/GeoLite2-City.mmdb"
+            - name: GEOAPI_PORT
+              value: "8080"
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: web
+              mountPath: '/data'
+              readOnly: true
+      volumes:
+        - name: web
+          emptyDir: {}
