@@ -1,11 +1,25 @@
 # Geo API
 Geo-location web services utilizing [MaxMind GeoLite City](https://www.maxmind.com/) database.
 
+The overall goals of kubernetes orchestrating a fetch and launch of the API server have been completed. There is a kubernetes deployment called [geo-deployment.yml](kubernetes/geo-deployment.yml) that will be applied. Please follow the [Requirements](#requirements) and [Quickstart](#quickstart) to get started. 
+
+I created [Project Roadmap](#project-roadmap) and [Development Log](#development-log) to write down development challenges. 
+
+# Table of Contents
+- [Requirements](#requirements)
+- [Quickstart](#quickstart)
+- [Configuration](#configuration)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Running the Server](#running-the-server)
+- [Project Requirements](#project-requirements)
+- [Development Log](#development-log)
+
 # Requirements
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [git](https://git-scm.com/downloads)
-- [node/npm](https://nodejs.org/en/download/) (if running tests)
+- [node/npm](https://nodejs.org/en/download/) (if running tests on your machine)
 
 # Quickstart
 1. Clone the code: `git clone git@github.com:ericbutera/geoip.git`
@@ -26,6 +40,8 @@ To set the API key for use in Kubernetes, run this command:
 ```
 kubectl create secret generic geo-api-key --from-literal=geo-api-key='API-KEY-VALUE'
 ```
+
+Once the API key is set, change geo-fetcher's `ENVIRONMENT` to `production` in [geo-deployment.yml](https://github.com/ericbutera/geoip/blob/69752dd1c7c60a94e071b03ae4d13940e2a76a25/kubernetes/geo-deployment.yml#L33).
 
 ## Environment Variables
 - Geo API
@@ -122,7 +138,7 @@ npm test
 ```
 
 # Running the Server
-The server can be ran stand-alone.
+The API server can be ran stand-alone. This will require a local copy of the MaxMind database along with a development environment using NodeJS.
 ```bash
 npm install
 npm start
@@ -135,35 +151,64 @@ npm start
   - fetch/update Geo database (every "several weeks")
   - start/restart API server to use new database
 - Launch with single command:
-  - `kubectl apply`
-  - `helm install`
-  - `make deploy`
+  - `kubectl apply` 
 
 # Project Roadmap
 Major project milestones and future enhancements are listed here.
-- images
-  - it would be nice to have the docker images published; perhaps a github action can do this?
+- architecture
+    - follow advice on [12 factor app](https://12factor.net/)
+    - future architecture concerns:
+        - geo fetcher
+            - update at intervals
+            - cache into a secure bucket
+            - add resiliency around IO errors 
+                - MaxMind
+                - own cloud storage
+        - API server 
+            - gracefully restart upon some event that the database was updated
+    - load balancer: real-world apps require uptime Service Level Agreement (SLAs) to be met
+        - api gateway
+            - multiple app processes
+    - rate limiting
+    - observability & metrics
+        - proof of SLA adherence 
+        - APM spans/traces
+        - logging
 - kubernetes
-    - node app is public (using port forwarding)
-    - ~~geoupdater private~~
-    - ~~secrets manager for API key~~ using kubectl secrets
+    - TODO
+        - load balancer, api gateway, geoapp instances
+        - replicas 
+        - image container service: it would be nice to have the docker images auto-published; perhaps a github action can do this?
+        - look into helm charts 
+    - DONE
+        - geoapi node app is public (using kubectl port forwarding)
+        - secrets manager: using kubectl secrets
+        - geo fetch pulls database in init containers
 - geoupdater
-    - UPDATE: used geo-fetch  (see geo-fetcher directory)
-    - ~~use geoupdater?~~ NO
-        - ~~risk as its third party, could cause downtime~~
-        - ~~not immediately obvious what it updates or where the output goes~~
-    - ~~use csv OR mmdb~~ MMDB
-        - requires comparing sha256 against download
-        - issue head for checking if fetch necessary
-        - app needs restart after fetch
+    - TODO:
+        - compare sha256 against download (prevent forgery)
+        - issue HEAD for checking if fetch necessary
+        - api server needs restart after fetch
+    - Ideas not used:
+        - ~custom geo-fetch (see geo-fetcher directory)~~
+        - ~~use geoupdater?~~ NO
+            - ~~risk as its third party, could cause downtime~~
+            - ~~not immediately obvious what it updates or where the output goes~~
+        - ~~use csv OR mmdb~~ MMDB
 - app:
-    - logging (at least console log reqs)
-    - hook up to github actions
-    - [openapi](https://github.com/kogosoftwarellc/open-api/tree/master/packages/express-openapi#what-is-openapi)
-    - no auth
+    - TODO:
+        - add ability to run tests:
+            - on build server (github actions)
+            - in k8 so deps aren't required on host
+        - logging (at least console log reqs)
+        - hook up github actions
+            - there was a hurdle with the geo database as a dependency
+        - [openapi docs](https://github.com/kogosoftwarellc/open-api/tree/master/packages/express-openapi#what-is-openapi)
+        - add auth
 
 # Development Log
 Here is a running list of tasks performed to faciliate discussion.
+- final pass at README, no code changes
 - added better error handling and retry on fetcher
 - tested on mac, documented error with secret not being set
 - fixed api tests; I was relying on old versioned api & the mmdb database existing within the project
@@ -171,6 +216,7 @@ Here is a running list of tasks performed to faciliate discussion.
 - figured out k8s secrets from the command line: `kubectl create secret generic geo-api-key --from-literal=geo-api-key='API-KEY-VALUE'`
 - i realized my repo, containers, and app names became out of sync as the project moved along. i would like to rename things to geo-* for consistency.
 - created geo-fetcher image
+    - using init container
     - the process is complicated enough to warrant usage of a bash script
     - added output showing progress
     - added geo-fetcher README to show commands on building image
